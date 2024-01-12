@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save viewport with javascript</title>
+    <style>
+        * {
+            font-family: 'Courier New', Courier, monospace
+        
+        }
+        body {
+            background-color: #000;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        button {
+            background-color: green;
+            color: #fff;
+            width: 200px;
+            height: 40px;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <button>Grabar pantalla</button>
+
+    <script>
+        const $button = document.querySelector('button')
+
+        $button.addEventListener("click", async () => {
+            const media = await navigator.mediaDevices.getDisplayMedia({
+                video: { frameRate: { ideal: 30 } }
+            })
+            const mediarecorder = new MediaRecorder(media, {
+                mimeType: 'video/webm;codecs=vp8, opus'
+            })
+            mediarecorder.start()
+
+            const [video] = media.getVideoTracks()
+            video.addEventListener("ended", ()=> {
+                mediarecorder.stop()
+            })
+
+            mediarecorder.addEventListener("dataavailable", (e)=> {
+                const link = document.createElement("a")
+                link.href = URL.createObjectURL(e.data)
+                link.download = "captura.webm"
+                link.click()
+            })
+
+        })
+    </script>
+    
+</body>
+</html>
