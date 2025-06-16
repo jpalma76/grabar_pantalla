@@ -28,15 +28,18 @@
 </head>
 <body>
 
-    <button>Grabar pantalla</button>
+    <button>{message}</button>
 
     <script>
         const $button = document.querySelector('button')
+        $button.innerText = "Grabar Pantalla"
+
 
         $button.addEventListener("click", async () => {
             const media = await navigator.mediaDevices.getDisplayMedia({
                 video: { frameRate: { ideal: 30 } }
             })
+            $button.innerText = 'Grabando'
             const mediarecorder = new MediaRecorder(media, {
                 mimeType: 'video/webm;codecs=vp8, opus'
             })
@@ -46,11 +49,12 @@
             video.addEventListener("ended", ()=> {
                 mediarecorder.stop()
             })
-
+            
             mediarecorder.addEventListener("dataavailable", (e)=> {
                 const link = document.createElement("a")
                 link.href = URL.createObjectURL(e.data)
                 link.download = "captura.webm"
+                $button.innerText = "Grabar Pantalla"
                 link.click()
             })
 
